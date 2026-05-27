@@ -1,0 +1,147 @@
+'use client'
+
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Star } from 'lucide-react'
+import Image from 'next/image'
+import type { GroceryDeal, GrocerySavedDeal } from '../types'
+
+interface DealCardProps {
+  deal: GroceryDeal | GrocerySavedDeal
+  isSaved: boolean
+  view?: 'card' | 'list'
+  onSave?: () => void
+  onUnsave?: () => void
+}
+
+function discountBadgeClass(pct: number) {
+  if (pct >= 40) return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
+  if (pct >= 20) return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100'
+  return 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
+}
+
+function SaveButton({ isSaved, onSave, onUnsave }: Pick<DealCardProps, 'isSaved' | 'onSave' | 'onUnsave'>) {
+  return (
+    <Button
+      variant={isSaved ? 'default' : 'outline'}
+      size="sm"
+      className="shrink-0 text-xs h-7 px-2"
+      onClick={isSaved ? onUnsave : onSave}
+    >
+      <Star className={`w-3 h-3 mr-1 ${isSaved ? 'fill-current' : ''}`} />
+      {isSaved ? 'Saved' : 'Save'}
+    </Button>
+  )
+}
+
+export function DealCard({ deal, isSaved, view = 'card', onSave, onUnsave }: DealCardProps) {
+  if (view === 'list') {
+    return (
+      <Card className="hover:shadow-md transition-shadow">
+        <CardContent className="p-3 flex items-center gap-3">
+          {/* Thumbnail */}
+          {deal.imageUrl ? (
+            <div className="relative shrink-0 w-16 h-16 bg-muted/30 rounded-md overflow-hidden">
+              <Image
+                src={deal.imageUrl}
+                alt={deal.itemName}
+                fill
+                className="object-contain p-1"
+                unoptimized
+              />
+            </div>
+          ) : (
+            <div className="shrink-0 w-16 h-16 bg-muted/30 rounded-md" />
+          )}
+
+          {/* Details */}
+          <div className="flex-1 min-w-0">
+            <p className="font-medium text-sm truncate">{deal.itemName}</p>
+            <p className="text-xs text-muted-foreground truncate">{deal.storeName}</p>
+            {deal.storeAddress && (
+              <p className="text-xs text-muted-foreground truncate">{deal.storeAddress}</p>
+            )}
+            {deal.description && (
+              <p className="text-xs text-muted-foreground truncate">{deal.description}</p>
+            )}
+          </div>
+
+          {/* Price */}
+          <div className="shrink-0 flex items-baseline gap-1 text-right">
+            {deal.currentPrice != null && (
+              <span className="font-semibold text-sm">${deal.currentPrice.toFixed(2)}</span>
+            )}
+            {deal.originalPrice != null && deal.originalPrice !== deal.currentPrice && (
+              <span className="text-xs text-muted-foreground line-through">
+                ${deal.originalPrice.toFixed(2)}
+              </span>
+            )}
+          </div>
+
+          {/* Badge */}
+          <Badge className={`shrink-0 text-xs font-semibold ${discountBadgeClass(deal.discountPercent)}`}>
+            {deal.discountPercent}% OFF
+          </Badge>
+
+          <SaveButton isSaved={isSaved} onSave={onSave} onUnsave={onUnsave} />
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <Card className="flex flex-col hover:shadow-md transition-shadow">
+      <CardContent className="p-4 flex flex-col gap-2 flex-1">
+        {/* Store + badge row */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="min-w-0">
+            <span className="text-xs font-medium text-muted-foreground truncate block">{deal.storeName}</span>
+            {deal.storeAddress && (
+              <span className="text-xs text-muted-foreground truncate block">{deal.storeAddress}</span>
+            )}
+          </div>
+          <Badge className={`shrink-0 text-xs font-semibold ${discountBadgeClass(deal.discountPercent)}`}>
+            {deal.discountPercent}% OFF
+          </Badge>
+        </div>
+
+        {/* Image */}
+        {deal.imageUrl && (
+          <div className="relative w-full h-40 bg-muted/30 rounded-md overflow-hidden">
+            <Image
+              src={deal.imageUrl}
+              alt={deal.itemName}
+              fill
+              className="object-contain p-2"
+              unoptimized
+            />
+          </div>
+        )}
+
+        {/* Item name */}
+        <p className="font-medium text-sm line-clamp-2 flex-1">{deal.itemName}</p>
+
+        {/* Description */}
+        {deal.description && (
+          <p className="text-xs text-muted-foreground line-clamp-1">{deal.description}</p>
+        )}
+
+        {/* Price row + save button */}
+        <div className="flex items-center justify-between gap-2 mt-auto pt-2 border-t">
+          <div className="flex items-baseline gap-1.5">
+            {deal.currentPrice != null && (
+              <span className="font-semibold text-sm">${deal.currentPrice.toFixed(2)}</span>
+            )}
+            {deal.originalPrice != null && deal.originalPrice !== deal.currentPrice && (
+              <span className="text-xs text-muted-foreground line-through">
+                ${deal.originalPrice.toFixed(2)}
+              </span>
+            )}
+          </div>
+          <SaveButton isSaved={isSaved} onSave={onSave} onUnsave={onUnsave} />
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
