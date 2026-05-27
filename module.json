@@ -1,0 +1,40 @@
+{
+  "id": "grocery-deals",
+  "group": "Shopping",
+  "name": "Daily Grocery Deals",
+  "description": "Daily digest of the best grocery deals near you, powered by Flipp",
+  "version": "1.0.0",
+  "author": "ARI Hackathon",
+  "icon": "ShoppingCart",
+  "enabled": true,
+  "fullscreen": false,
+  "menuPriority": 30,
+  "permissions": {
+    "database": true,
+    "api": true,
+    "dashboard": true
+  },
+  "routes": [
+    {
+      "path": "/grocery-deals",
+      "label": "Daily Grocery Deals",
+      "icon": "ShoppingCart",
+      "sidebarPosition": "main"
+    }
+  ],
+  "dependencies": {
+    "modules": [],
+    "coreFeatures": []
+  },
+  "database": {
+    "tables": ["grocery_keywords", "grocery_saved_deals", "grocery_deals_cache"]
+  },
+  "npmDependencies": {},
+  "dashboard": {
+    "widgets": true,
+    "widgetComponents": ["./components/dashboard-widget.tsx"]
+  },
+  "submenu": {
+    "component": "./components/sidebar-submenu.tsx"
+  }
+}
