@@ -18,6 +18,7 @@ export const SaveDealSchema = z.object({
   keyword: z.string(),
   itemName: z.string(),
   storeName: z.string(),
+  storeAddress: z.string().nullable(),
   currentPrice: z.number().nullable(),
   originalPrice: z.number().nullable(),
   discountPercent: z.number(),

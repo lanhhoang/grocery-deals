@@ -69,6 +69,7 @@ export default function GroceryDealsPage() {
         keyword: deal.keyword,
         itemName: deal.itemName,
         storeName: deal.storeName,
+        storeAddress: deal.storeAddress,
         currentPrice: deal.currentPrice,
         originalPrice: deal.originalPrice,
         discountPercent: deal.discountPercent,

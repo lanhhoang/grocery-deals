@@ -24,6 +24,7 @@ export const groceryDealsCache = pgTable("grocery_deals_cache", {
   discountPercent: numeric("discount_percent", { precision: 5, scale: 2 }),
   imageUrl: text("image_url"),
   description: text("description"),
+  storeAddress: text("store_address"),
   fetchedAt: timestamp("fetched_at", { withTimezone: true, mode: 'string' }).notNull().defaultNow(),
 }, (table) => [
   index("idx_grocery_deals_cache_user_id").using("btree", table.userId.asc().nullsLast().op("text_ops")),
@@ -44,6 +45,7 @@ export const grocerySavedDeals = pgTable("grocery_saved_deals", {
   discountPercent: numeric("discount_percent", { precision: 5, scale: 2 }),
   imageUrl: text("image_url"),
   description: text("description"),
+  storeAddress: text("store_address"),
   savedAt: timestamp("saved_at", { withTimezone: true, mode: 'string' }).notNull().defaultNow(),
 }, (table) => [
   index("idx_grocery_saved_deals_user_id").using("btree", table.userId.asc().nullsLast().op("text_ops")),

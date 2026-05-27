@@ -9,6 +9,7 @@ export interface GroceryDeal {
   keyword: string
   itemName: string
   storeName: string
+  storeAddress: string | null
   currentPrice: number | null
   originalPrice: number | null
   discountPercent: number

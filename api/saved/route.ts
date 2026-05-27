@@ -92,6 +92,7 @@ export async function POST(request: NextRequest) {
           keyword: d.keyword,
           itemName: d.itemName,
           storeName: d.storeName,
+          storeAddress: d.storeAddress,
           currentPrice: d.currentPrice != null ? String(d.currentPrice) : null,
           originalPrice: d.originalPrice != null ? String(d.originalPrice) : null,
           discountPercent: String(d.discountPercent),

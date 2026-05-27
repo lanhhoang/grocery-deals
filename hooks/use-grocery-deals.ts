@@ -203,7 +203,7 @@ export function useSaveDeal() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (deal: Omit<GrocerySavedDeal, 'id' | 'savedAt'>): Promise<GrocerySavedDeal> => {
+    mutationFn: async (deal: Omit<GrocerySavedDeal, 'id' | 'savedAt' | 'fetchedAt' | 'isSaved'>): Promise<GrocerySavedDeal> => {
       const res = await fetch('/api/modules/grocery-deals/saved', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -59,6 +59,9 @@ export function DealCard({ deal, isSaved, view = 'card', onSave, onUnsave }: Dea
           <div className="flex-1 min-w-0">
             <p className="font-medium text-sm truncate">{deal.itemName}</p>
             <p className="text-xs text-muted-foreground truncate">{deal.storeName}</p>
+            {deal.storeAddress && (
+              <p className="text-xs text-muted-foreground truncate">{deal.storeAddress}</p>
+            )}
             {deal.description && (
               <p className="text-xs text-muted-foreground truncate">{deal.description}</p>
             )}
@@ -92,7 +95,12 @@ export function DealCard({ deal, isSaved, view = 'card', onSave, onUnsave }: Dea
       <CardContent className="p-4 flex flex-col gap-2 flex-1">
         {/* Store + badge row */}
         <div className="flex items-center justify-between gap-2">
-          <span className="text-xs font-medium text-muted-foreground truncate">{deal.storeName}</span>
+          <div className="min-w-0">
+            <span className="text-xs font-medium text-muted-foreground truncate block">{deal.storeName}</span>
+            {deal.storeAddress && (
+              <span className="text-xs text-muted-foreground truncate block">{deal.storeAddress}</span>
+            )}
+          </div>
           <Badge className={`shrink-0 text-xs font-semibold ${discountBadgeClass(deal.discountPercent)}`}>
             {deal.discountPercent}% OFF
           </Badge>

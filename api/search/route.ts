@@ -6,7 +6,7 @@ import { DEFAULT_SECURITY, ErrorResponseSchema, InternalServerErrorResponse } fr
 import { groceryKeywords, groceryDealsCache } from '@/modules/grocery-deals/database/schema'
 import { moduleSettings } from '@/lib/db/schema'
 import { eq, desc } from 'drizzle-orm'
-import { searchFlipp } from '@/modules/grocery-deals/lib/flipp'
+import { fetchAndDeduplicateDeals } from '@/modules/grocery-deals/lib/flipp'
 
 const DEFAULT_POSTAL_CODE = 'M5V3A8'
 
@@ -14,7 +14,7 @@ registry.registerPath({
   method: 'get',
   path: '/api/modules/grocery-deals/search',
   operationId: 'searchGroceryDeals',
-  summary: 'Fan out to Flipp for all keywords, refresh cache, return top 50 deals',
+  summary: 'Fan out to Flipp for all keywords, deduplicate by cheapest store, attach addresses, refresh cache',
   tags: ['grocery-deals'],
   security: DEFAULT_SECURITY,
   responses: {
@@ -48,11 +48,11 @@ export async function GET(_request: NextRequest) {
       return NextResponse.json({ deals: [], cached_at: null })
     }
 
-    // Fan out to Flipp for all keywords concurrently
-    const results = await Promise.all(
-      keywordRows.map(({ keyword }) => searchFlipp(keyword, postalCode))
+    // Fan out, deduplicate by cheapest-per-item, attach store addresses
+    const allDeals = await fetchAndDeduplicateDeals(
+      keywordRows.map((r) => r.keyword),
+      postalCode
     )
-    const allDeals = results.flat()
 
     // Clear old cache for this user
     await withRLS((db) =>
@@ -68,6 +68,7 @@ export async function GET(_request: NextRequest) {
             keyword: d.keyword,
             itemName: d.itemName,
             storeName: d.storeName,
+            storeAddress: d.storeAddress,
             currentPrice: d.currentPrice != null ? String(d.currentPrice) : null,
             originalPrice: d.originalPrice != null ? String(d.originalPrice) : null,
             discountPercent: String(d.discountPercent),

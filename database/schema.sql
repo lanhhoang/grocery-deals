@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS grocery_deals_cache (
   description TEXT,
   fetched_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+ALTER TABLE grocery_deals_cache ADD COLUMN IF NOT EXISTS store_address TEXT;
 CREATE INDEX IF NOT EXISTS idx_grocery_deals_cache_user_id ON grocery_deals_cache(user_id);
 CREATE INDEX IF NOT EXISTS idx_grocery_deals_cache_fetched_at ON grocery_deals_cache(fetched_at DESC);
 ALTER TABLE grocery_deals_cache ENABLE ROW LEVEL SECURITY;
@@ -61,6 +62,7 @@ CREATE TABLE IF NOT EXISTS grocery_saved_deals (
   description TEXT,
   saved_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+ALTER TABLE grocery_saved_deals ADD COLUMN IF NOT EXISTS store_address TEXT;
 CREATE INDEX IF NOT EXISTS idx_grocery_saved_deals_user_id ON grocery_saved_deals(user_id);
 ALTER TABLE grocery_saved_deals ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS grocery_saved_deals_rls_select ON grocery_saved_deals;
