@@ -122,16 +122,15 @@ export async function fetchAndDeduplicateDeals(
 
   const deduplicated = Array.from(byItem.values())
 
-  // Look up store addresses for unique merchants (rate-limit: 1 req/sec per Nominatim ToS)
+  // Look up store addresses for unique merchants in parallel
   const uniqueMerchants = [...new Set(deduplicated.map((d) => d.storeName))]
-  const addressMap = new Map<string, string | null>()
-
-  for (const merchant of uniqueMerchants) {
-    const address = await lookupStoreAddress(merchant, city)
-    addressMap.set(merchant, address)
-    // Nominatim requires max 1 request/second
-    await new Promise((r) => setTimeout(r, 1100))
-  }
+  const addressEntries = await Promise.all(
+    uniqueMerchants.map(async (merchant) => {
+      const address = await lookupStoreAddress(merchant, city)
+      return [merchant, address] as const
+    })
+  )
+  const addressMap = new Map(addressEntries)
 
   return deduplicated.map((deal) => ({
     ...deal,
