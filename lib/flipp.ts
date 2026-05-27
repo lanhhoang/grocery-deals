@@ -33,7 +33,9 @@ export async function searchFlipp(keyword: string, postalCode: string): Promise<
           currentPrice: cur,
           originalPrice: orig,
           storeName: String(item.merchant ?? ''),
-          imageUrl: item.image_url ? String(item.image_url) : null,
+          imageUrl: (item.clean_image_url || item.clipping_image_url)
+            ? String(item.clean_image_url || item.clipping_image_url)
+            : null,
           discountPercent: discount,
           keyword,
         }

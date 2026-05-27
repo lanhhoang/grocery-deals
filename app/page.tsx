@@ -6,7 +6,7 @@ import { useToast } from '@/hooks/use-toast'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ShoppingCart, RefreshCw, Settings } from 'lucide-react'
+import { ShoppingCart, RefreshCw, Settings, LayoutGrid, List } from 'lucide-react'
 import Link from 'next/link'
 import {
   useGrocerySettings,
@@ -25,6 +25,8 @@ export default function GroceryDealsPage() {
   const { toast } = useToast()
   const { enabled: quotesEnabled } = useModuleEnabled('quotes')
   const [randomQuote, setRandomQuote] = useState<{ quote: string; author?: string } | null>(null)
+
+  const [view, setView] = useState<'card' | 'list'>('card')
 
   const { data: settings, isLoading: settingsLoading } = useGrocerySettings()
   const { data: keywords = [] } = useGroceryKeywords()
@@ -124,6 +126,27 @@ export default function GroceryDealsPage() {
           )}
         </div>
         <div className="flex items-center gap-2">
+          {/* View toggle */}
+          <div className="flex items-center border rounded-md overflow-hidden">
+            <Button
+              variant="ghost"
+              size="sm"
+              className={`rounded-none h-8 px-2 ${view === 'card' ? 'bg-muted' : ''}`}
+              onClick={() => setView('card')}
+              title="Card view"
+            >
+              <LayoutGrid className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className={`rounded-none h-8 px-2 ${view === 'list' ? 'bg-muted' : ''}`}
+              onClick={() => setView('list')}
+              title="List view"
+            >
+              <List className="w-4 h-4" />
+            </Button>
+          </div>
           <Button variant="outline" size="sm" asChild>
             <Link href="/grocery-deals/settings">
               <Settings className="w-4 h-4 mr-2" />
@@ -158,22 +181,29 @@ export default function GroceryDealsPage() {
         </div>
       )}
 
-      {/* Skeleton loading grid */}
+      {/* Skeleton loading */}
       {isLoading && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className={view === 'card'
+          ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'
+          : 'flex flex-col gap-2'
+        }>
           {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-52 rounded-xl" />
+            <Skeleton key={i} className={view === 'card' ? 'h-52 rounded-xl' : 'h-20 rounded-xl'} />
           ))}
         </div>
       )}
 
-      {/* Deals grid */}
+      {/* Deals */}
       {!isLoading && deals.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className={view === 'card'
+          ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'
+          : 'flex flex-col gap-2'
+        }>
           {deals.map((deal) => (
             <DealCard
               key={deal.id}
               deal={deal}
+              view={view}
               isSaved={savedDeals.some(
                 (s) => s.itemName === deal.itemName && s.storeName === deal.storeName
               )}

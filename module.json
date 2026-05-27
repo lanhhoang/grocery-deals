@@ -17,7 +17,7 @@
   "routes": [
     {
       "path": "/grocery-deals",
-      "label": "Daily Grocery Deals",
+      "label": "Grocery Deals",
       "icon": "ShoppingCart",
       "sidebarPosition": "main"
     }
